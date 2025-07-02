@@ -302,7 +302,7 @@ def user_login(userLogin):
             session["username"] = username
             return "✅ Login successful"
         else:
-            return "⚠️ Please check your password and try again"
+            return "⚠️ Please check your username and password and try again"
     else:
         return "⚠️ Please check your username and password and try again"
 
