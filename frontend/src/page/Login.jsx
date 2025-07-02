@@ -12,7 +12,7 @@ export default function Login() {
 
     function handleLogin(formData) {
 
-        axios.post("http://localhost:5000/api/login", {
+        axios.post("/api/login", {
             username: formData.get("username"),
             password: formData.get("password")
         }, {
