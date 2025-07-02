@@ -12,7 +12,7 @@ export default function Login() {
 
     function handleLogin(formData) {
 
-        axios.post("/api/login", {
+        axios.post("http://localhost:5000/api/login", {
             username: formData.get("username"),
             password: formData.get("password")
         }, {
@@ -22,10 +22,10 @@ export default function Login() {
 
                 if (res.data[0] == "✅ Login successful") {
                     login(res.data[1])
-                    navigate("/auth/verify-otp")
+                    navigate("/branch")
                 }
                 else {
-                    setLoginEmail(res.data)
+                    setLoginEmail(res.data[0])
                 }
 
             }).catch((err) => {

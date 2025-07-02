@@ -11,7 +11,7 @@ from datetime import timedelta
 from functools import wraps
 import random
 from flask_session import Session
-import pyotp
+# import pyotp
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -21,12 +21,12 @@ load_dotenv()
 
 
 database = os.getenv("DATABASE")
-geca_mail=os.getenv("GECAEMAIL")
-app_password=os.getenv("APPPASSWORD")
+# geca_mail=os.getenv("GECAEMAIL")
+# app_password=os.getenv("APPPASSWORD")
 
-server = smtplib.SMTP('smtp.gmail.com', 587)
-server.starttls()
-server.login(geca_mail, app_password)
+# server = smtplib.SMTP('smtp.gmail.com', 587)
+# server.starttls()
+# server.login(geca_mail, app_password)
 
 
 app = Flask(__name__)
@@ -346,53 +346,53 @@ def login():
     return [user_login(user),str(uuid.uuid4())]
 
 
-totp = pyotp.TOTP(pyotp.random_base32(),digits=6,interval=150)
+# totp = pyotp.TOTP(pyotp.random_base32(),digits=6,interval=150)
 
 
-@app.route("/api/auth-otp",methods=["GET"])
-def genrate_otp():
+# @app.route("/api/auth-otp",methods=["GET"])
+# def genrate_otp():
  
-    user_collection = db["user"]
-    user = user_collection.find_one({"username":session["username"],"email": {"$exists": True}})
-    if user:
-        user_email = user["email"]
-        user_name=user["name"]
+#     user_collection = db["user"]
+#     user = user_collection.find_one({"username":session["username"],"email": {"$exists": True}})
+#     if user:
+#         user_email = user["email"]
+#         user_name=user["name"]
 
-        msg= MIMEMultipart()
-        msg["From"]=geca_mail
-        msg["To"]=user_email
-        msg["Subject"]="StudentDash: OTP Verification"
+#         msg= MIMEMultipart()
+#         msg["From"]=geca_mail
+#         msg["To"]=user_email
+#         msg["Subject"]="StudentDash: OTP Verification"
 
-        body=f"""<html>
-        <body>
-            <p>Hello, {user_name}</p>
-            <p>This is your OTP:</p>
-            <h2 style="color:#2E86C1;">{totp.now()}</h2>
-            <p>Please use this OTP to complete your verification.</p>
-            <p><strong>Note:</strong> Do not share this OTP with anyone.</p>
-            <br>
-            <p>Regards,<br>StudentDash Team</p>
-        </body>
-        </html>
-        """
-        msg.attach(MIMEText(body,"html"))
-        server.send_message(msg)
+#         body=f"""<html>
+#         <body>
+#             <p>Hello, {user_name}</p>
+#             <p>This is your OTP:</p>
+#             <h2 style="color:#2E86C1;">{totp.now()}</h2>
+#             <p>Please use this OTP to complete your verification.</p>
+#             <p><strong>Note:</strong> Do not share this OTP with anyone.</p>
+#             <br>
+#             <p>Regards,<br>StudentDash Team</p>
+#         </body>
+#         </html>
+#         """
+#         msg.attach(MIMEText(body,"html"))
+#         server.send_message(msg)
 
-        return "otp sent"
+#         return "otp sent"
 
-    else:
-        return "user not exists"
+#     else:
+#         return "user not exists"
 
 
 
-@app.route("/api/auth-otp",methods=["POST"])
-def verfiy_otp():
-    otp_req = request.get_json()
+# @app.route("/api/auth-otp",methods=["POST"])
+# def verfiy_otp():
+#     otp_req = request.get_json()
 
-    if totp.verify(otp_req["otp"]):
-        return ["OTP verified",str(uuid.uuid4())]
-    else:
-        return "OTP not verified"
+#     if totp.verify(otp_req["otp"]):
+#         return ["OTP verified",str(uuid.uuid4())]
+#     else:
+#         return "OTP not verified"
 
 @app.route("/api/home")
 @login_required
