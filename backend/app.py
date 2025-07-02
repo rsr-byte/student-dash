@@ -1,10 +1,7 @@
 from flask import Flask,  jsonify,request,session,send_from_directory
-import plotly.graph_objects as go
 import pandas as pd
-import plotly.express as px
 import os
 from dotenv import load_dotenv
-import plotly.io as pio
 from flask_cors import CORS
 import numpy as np
 from pymongo.mongo_client import MongoClient
@@ -14,11 +11,23 @@ from datetime import timedelta
 from functools import wraps
 import random
 from flask_session import Session
-
+import pyotp
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import uuid
 
 load_dotenv()
 
+
 database = os.getenv("DATABASE")
+geca_mail=os.getenv("GECAEMAIL")
+app_password=os.getenv("APPPASSWORD")
+
+server = smtplib.SMTP('smtp.gmail.com', 587)
+server.starttls()
+server.login(geca_mail, app_password)
+
 
 app = Flask(__name__)
 
@@ -58,7 +67,7 @@ def get_selected_collection():
     if not collection_name:
         raise ValueError("No collection selected")
 
-    collection = db["ME"]
+    collection = db[collection_name]
     data = list(collection.find())
     df = pd.DataFrame(data)[["name", "rollno","semester","subject_grade_list","visibility","avatar"]]
    
@@ -95,124 +104,6 @@ def extract_sgpa(df, semester_index):
         except (IndexError, ValueError):
             return None
     return df["semester"].apply(get_sgpa)
-
-
-
-def create_bar_chart(data,  name_col,value_col, title, window_size=5):
-
-    bar = go.Bar(
-        y=data[name_col][:window_size],
-        x=data[value_col][:window_size],
-        text=data[value_col][:window_size],
-        orientation='h',
-        marker=dict(
-            color=data[value_col],
-            colorscale=px.colors.sequential.Darkmint,
-        ),
-        hovertemplate=f'Name: %{{y}}<br>{value_col}: %{{x}}<extra></extra>',
-        width=0.6
-    )
-
-    fig = go.Figure(data=[bar])
-
-    steps = []
-    for j in range(0, len(data)+5 - window_size + 1, window_size):
-        step = dict(
-            method="restyle",
-            args=[
-                {
-                    "y": [data[name_col][j:j + window_size]],
-                    "x": [data[value_col][j:j + window_size]],
-                    "text": [data[value_col][j:j + window_size]],
-                    "marker.color": [data[value_col][j:j + window_size]]
-                }
-            ],
-            label=f"{j + 1}-{j + window_size}"
-        )
-        steps.append(step)
-
-    fig.update_layout(
-        sliders=[dict(active=0, currentvalue={"prefix": "Students: "}, pad={"t": 50}, steps=steps)],
-        height=500,
-        xaxis_title=title,
-        autosize=True,
-        bargap=0.3,
-        yaxis=dict(automargin=True, autorange="reversed", fixedrange=True)
-    )
-
-    return fig
-
-# def classwiseplot(student_type):
-
-#     df=get_selected_collection()
-
-#     visible_counts=len(df[df["visibility"] == True]) 
-#     total_counts=len(df)   
-#     loop_start=0
-#     if student_type=="REAP":
-#         df=df[df["University Roll Number"].str.contains("24EEA")==False]
-#     else:
-#         df=df[df["University Roll Number"].str.contains("24EEA")]
-#         loop_start=2
-
-#     semester_figures = {}
-#     semester_info = {}
-    
-#     for i in range(loop_start,8):
-        
-#         sem_col = f"Semester {i+1}"
-        
-#         def extract_sgpa(x):
-#             try:
-#                 val = x[-2][i+1]  
-#                 return float(val) if val.strip() != '' else None
-#             except (IndexError, ValueError):
-#                 return None
-
-#         df[sem_col] = df["semester"].apply(extract_sgpa)
-        
-#         sem_df = df[["name", sem_col]].dropna()
-            
-#         if not sem_df.empty:
-#             semester_info[sem_col] = [
-#                 sem_df[sem_col].max(),
-#                 sem_df[sem_col].min(),
-#                 round(sem_df[sem_col].mean(),2),
-#                 sem_df.shape[0],
-#                 df[["name", sem_col]].shape[0]
-#                 ]
-#             sem_df = sem_df.sort_values(sem_col,ascending=False)
-
-
-#             semester_figures[sem_col] = create_bar_chart(sem_df,"name",sem_col,"SGPA")
-
-
-#     cgpa = df.dropna(axis=1, how='all')
-#     sem_cols = [col for col in cgpa.columns if col.startswith("Semester ")]
-#     cgpa.dropna(axis=0,inplace=True)
-#     cgpa["cgpa"] = cgpa[sem_cols].mean(axis=1) + 0.005
-
-#     def truncate(x, decimals=2):
-#         factor = 10 ** decimals
-#         return np.floor(x * factor) / factor
-
-#     cgpa["cgpa"] = cgpa["cgpa"].apply(truncate)
-#     cgpa_df = cgpa[["name", "cgpa"]]
-#     cgpa_df.dropna(axis=0,inplace=True)
-#     if not cgpa_df.empty:
-#         cgpa_df = cgpa_df.sort_values("cgpa", ascending=False)
-
-#         semester_info["CGPA"] = [
-#             cgpa_df["cgpa"].max(),
-#             cgpa_df["cgpa"].min(),
-#             cgpa_df["cgpa"].mean().round(2),
-#             cgpa_df.shape[0],
-#             len(df)
-#         ]
-
-#         semester_figures["CGPA"] = create_bar_chart(cgpa_df,"name","cgpa","CGPA")
-
-#     return [semester_figures,semester_info,visible_counts,total_counts]
 
 
 def classwiseplot(student_type):
@@ -268,12 +159,11 @@ def classwiseplot(student_type):
 
     df["cgpa"] = df["semester"].apply(extract_cgpa)
 
+
+    total_length=len(df)
     df.dropna(subset=["cgpa"], inplace=True)
 
    
-
-
-  
     cgpa_df = df[["name", "cgpa"]]
     
     if not cgpa_df.empty:
@@ -284,7 +174,7 @@ def classwiseplot(student_type):
             cgpa_df["cgpa"].min(),
             round(cgpa_df["cgpa"].mean(),2),
             cgpa_df.shape[0],
-            len(df)
+            total_length
         ]
 
 
@@ -453,7 +343,56 @@ def login():
         "password": data["password"]
     }
     
-    return user_login(user)
+    return [user_login(user),str(uuid.uuid4())]
+
+
+totp = pyotp.TOTP(pyotp.random_base32(),digits=6,interval=150)
+
+
+@app.route("/api/auth-otp",methods=["GET"])
+def genrate_otp():
+ 
+    user_collection = db["user"]
+    user = user_collection.find_one({"username":session["username"],"email": {"$exists": True}})
+    if user:
+        user_email = user["email"]
+        user_name=user["name"]
+
+        msg= MIMEMultipart()
+        msg["From"]=geca_mail
+        msg["To"]=user_email
+        msg["Subject"]="StudentDash: OTP Verification"
+
+        body=f"""<html>
+        <body>
+            <p>Hello, {user_name}</p>
+            <p>This is your OTP:</p>
+            <h2 style="color:#2E86C1;">{totp.now()}</h2>
+            <p>Please use this OTP to complete your verification.</p>
+            <p><strong>Note:</strong> Do not share this OTP with anyone.</p>
+            <br>
+            <p>Regards,<br>StudentDash Team</p>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(body,"html"))
+        server.send_message(msg)
+
+        return "otp sent"
+
+    else:
+        return "user not exists"
+
+
+
+@app.route("/api/auth-otp",methods=["POST"])
+def verfiy_otp():
+    otp_req = request.get_json()
+
+    if totp.verify(otp_req["otp"]):
+        return ["OTP verified",str(uuid.uuid4())]
+    else:
+        return "OTP not verified"
 
 @app.route("/api/home")
 @login_required

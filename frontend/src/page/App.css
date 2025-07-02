@@ -352,8 +352,85 @@ body {
   width: 100%;
 }
 
+.otp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
 
 
+.otp>form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 400px;
+  height: 50%;
+  padding: 5px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+  /* backdrop-filter: blur(10px); */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.otp-input {
+  margin: 20px;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otp-input>input {
+  width: 200px;
+  padding: 5px;
+  text-align: center;
+  border: none;
+  border-bottom: 1px solid rgb(35, 35, 173);
+  margin: 2px;
+  background: #87aace61;
+}
+
+.otp-input>input:focus {
+  outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.otp-btn {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  flex-direction: row;
+
+}
+
+.otp-btn>button {
+  padding: 8px;
+
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: 0.3s;
+  margin: 2px;
+  color: #F7F9FB;
+  background: #0077cc;
+}
+
+.otp-btn>.active {
+  cursor: pointer;
+}
+
+.otp-btn>.disabled {
+  cursor: not-allowed;
+  background: #333;
+  color: white;
+}
 
 .home {
   height: 400px;
@@ -546,9 +623,10 @@ body {
   font-family: "math";
 }
 
-.cgpa{
+.cgpa {
   display: inline;
 }
+
 /* .bg-blue {
   background-color: #6198d3b0;
 }
@@ -721,7 +799,6 @@ footer a:hover {
   background-color: white;
   flex-direction: column;
   padding: 20px;
-  width: 270px;
   border-radius: 15px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;

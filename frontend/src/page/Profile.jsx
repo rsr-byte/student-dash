@@ -144,7 +144,7 @@ function Profile() {
                     </div>
                 </div>
 
-                <div className="std project-info form" >
+                {/* <div className="std project-info form" >
                     <h3>Request for data Updation</h3>
 
                     <div className='dataupdationform'>
@@ -172,10 +172,10 @@ function Profile() {
                         />
 
                         <button style={{ width: "150px", height: "50px" }} onClick={() => handleSubmit()}>Submit</button>
-                    </div>
+                    </div> */}
 
 
-                </div>
+                {/* </div> */}
             </div >
         </>
     )

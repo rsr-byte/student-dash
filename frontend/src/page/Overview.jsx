@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Plot from "react-plotly.js";
 import Navbar from "../components/Navbar";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -9,7 +8,7 @@ import HeroSection from "../components/HeroSection";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import HorizontalBars from "../components/Charts";
-import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
+import { Gauge} from '@mui/x-charts/Gauge';
 
 
 export default function Overview() {
@@ -35,44 +34,44 @@ export default function Overview() {
     }
 
     switch (cookies) {
-      // case "CE":
-      //   setBranchName("Civil Engineering");
-      //   setBranchIntro("Building the future through structural innovation. Track academic performance and growth in the Civil Engineering department.");
-      //   setHidden(false)
-      //   break;
+      case "CE":
+        setBranchName("Civil Engineering");
+        setBranchIntro("Building the future through structural innovation. Track academic performance and growth in the Civil Engineering department.");
+        setHidden(false)
+        break;
       case "ME":
         setBranchName("Mechanical Engineering");
         setBranchIntro("Designing, analyzing, and innovating. Track the academic journey of Mechanical Engineering students here.");
         setHidden(false)
         break;
-      // case "EC":
-      //   setBranchName("Electronics & Communication Engineering");
-      //   setBranchIntro("Exploring circuits and communication systems. This dashboard highlights the academic progress of EC students across semesters.");
-      //   setHidden(false)
-      //   break;
-      // case "CY":
-      //   setBranchName("Cyber Security");
-      //   setBranchIntro("Defending the digital world through secure systems and ethical practices. This dashboard provides academic insights for Cyber Security students across semesters and subjects.");
-      //   setHidden(false)
-      //   break;
-      // case "CS":
-      //   setBranchName("Computer Science & Engineering");
-      //   setBranchIntro("Powering the digital age with code and logic. View semester-wise academic performance in the CS department.");
-      //   setHidden(false)
-      //   break;
-      // case "IT":
-      //   setBranchName("Information Technology");
-      //   setBranchIntro("Focused on software, data, and systems. Monitor performance trends and academic insights in the IT department.");
-      //   break;
-      // case "EI":
-      //   setBranchName(" Electronics & Instrumentation Engineering");
-      //   setBranchIntro("Precision, automation, and measurement. Analyze academic data for EI students with subject and semester insights.");
-      //   break;
-      // case "EE":
-      //   setBranchName("Electrical Engineering");
-      //   setBranchIntro("From power systems to electronics. Get a complete overview of academic trends in the EE department.");
-      //   setHidden(false)
-      //   break;
+      case "EC":
+        setBranchName("Electronics & Communication Engineering");
+        setBranchIntro("Exploring circuits and communication systems. This dashboard highlights the academic progress of EC students across semesters.");
+        setHidden(false)
+        break;
+      case "CY":
+        setBranchName("Cyber Security");
+        setBranchIntro("Defending the digital world through secure systems and ethical practices. This dashboard provides academic insights for Cyber Security students across semesters and subjects.");
+        setHidden(false)
+        break;
+      case "CS":
+        setBranchName("Computer Science & Engineering");
+        setBranchIntro("Powering the digital age with code and logic. View semester-wise academic performance in the CS department.");
+        setHidden(false)
+        break;
+      case "IT":
+        setBranchName("Information Technology");
+        setBranchIntro("Focused on software, data, and systems. Monitor performance trends and academic insights in the IT department.");
+        break;
+      case "EI":
+        setBranchName(" Electronics & Instrumentation Engineering");
+        setBranchIntro("Precision, automation, and measurement. Analyze academic data for EI students with subject and semester insights.");
+        break;
+      case "EE":
+        setBranchName("Electrical Engineering");
+        setBranchIntro("From power systems to electronics. Get a complete overview of academic trends in the EE department.");
+        setHidden(false)
+        break;
       default:
         navigate("/")
         // return;
@@ -202,9 +201,9 @@ export default function Overview() {
                 <h2>{sem}</h2>
                 <div className="team-members">
                   <div className="gauge member" >
-                    <h3>No. of Students Passed </h3>
+                    <h3>Pass Count </h3>
                     <Gauge
-                      width={150}
+                      width={120}
                       height={100}
                       value={detail[sem][3]}
                       valueMax={detail[sem][4]}
@@ -217,13 +216,13 @@ export default function Overview() {
                   <div className="gauge member">
                     <h3>Maximum</h3>
                     <Gauge
-                      width={150}
+                      width={120}
                       height={100}
                       value={detail[sem][0]}
                       valueMax={10}
                       startAngle={-90}
                       endAngle={90}
-                      text={({ value, valueMax }) => `${value} / ${valueMax}`}
+                      // text={({ value, valueMax }) => `${value} / ${valueMax}`}
                       style={getCGPAColor(detail[sem][0])}
                     />
 
@@ -231,20 +230,20 @@ export default function Overview() {
                   <div className="gauge member">
                     <h3>Minimum</h3>
                     <Gauge
-                      width={150}
+                      width={120}
                       height={100}
                       value={detail[sem][1]}
                       valueMax={10}
                       startAngle={-90}
                       endAngle={90}
-                      text={({ value, valueMax }) => `${value} / ${valueMax}`}
+                      // text={({ value, valueMax }) => `${value} / ${valueMax}`}
                     />
 
                   </div>
                   <div className="gauge member">
                     <h3>Average</h3>
                     <Gauge
-                      width={150}
+                      width={120}
                       height={100}
                       value={detail[sem][2]}
                       valueMax={10}

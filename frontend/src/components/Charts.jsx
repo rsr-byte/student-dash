@@ -165,7 +165,7 @@ function BarLabel(props) {
   } = props;
 
   const animatedProps = useAnimate(
-    { x: x + width - 40, y: y + height / 2 + 3 },
+    { x: x + width - 25, y: y + height / 2 + 3 },
     {
       initialProps: { x: x, y: y + height / 2 },
       createInterpolator: interpolateObject,

@@ -20,9 +20,9 @@ export default function Login() {
         })
             .then((res) => {
 
-                if (res.data == "✅ Login successful") {
-                    login("dummyToken")
-                    navigate("/branch")
+                if (res.data[0] == "✅ Login successful") {
+                    login(res.data[1])
+                    navigate("/auth/verify-otp")
                 }
                 else {
                     setLoginEmail(res.data)

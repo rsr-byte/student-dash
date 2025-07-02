@@ -10,6 +10,7 @@ import PageNotFound from './PageNotFound';
 import { AuthProvider } from './AuthProvider';
 import PrivateRoutes from './PrivateRoutes';
 import Profile from './Profile';
+import OTP from '../components/OTP';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
             </Route>
 
             <Route path="/" element={<Login />} />
+            <Route path="/auth/verify-otp" element={<OTP />} />
             <Route path='*' element={<PageNotFound />} />
           </Routes>
         </AuthProvider>
